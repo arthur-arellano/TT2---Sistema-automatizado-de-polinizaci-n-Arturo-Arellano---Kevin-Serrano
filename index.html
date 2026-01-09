@@ -1,0 +1,2925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍅 Monitor de Tomates - Dashboard</title>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
+                linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background shapes - Pastel theme */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+            filter: blur(120px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        /* Large pastel green glow */
+        body::before {
+            width: 800px;
+            height: 800px;
+            background: linear-gradient(135deg, #b2dfdb 0%, #80cbc4 50%, #4db6ac 100%);
+            top: -400px;
+            right: -300px;
+            opacity: 0.4;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        /* Pastel blue glow */
+        body::after {
+            width: 700px;
+            height: 700px;
+            background: linear-gradient(135deg, #bbdefb 0%, #90caf9 50%, #64b5f6 100%);
+            bottom: -350px;
+            left: -250px;
+            opacity: 0.35;
+            animation: float 20s infinite ease-in-out reverse;
+        }
+
+        /* Additional pastel shapes */
+        @keyframes floatSoft {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(0deg); 
+                opacity: 0.3;
+            }
+            33% { 
+                transform: translate(40px, -30px) rotate(120deg); 
+                opacity: 0.4;
+            }
+            66% { 
+                transform: translate(-20px, 20px) rotate(240deg); 
+                opacity: 0.35;
+            }
+        }
+
+        /* Pastel red/pink accent (very subtle) */
+        .app-container::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 205, 210, 0.25) 0%, transparent 70%);
+            top: 40%;
+            right: 15%;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatSoft 35s infinite ease-in-out;
+        }
+
+        /* Additional soft white glow */
+        .app-container::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: floatSoft 30s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -50px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Container principal */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header con glassmorphism */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 30px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2e7d32;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Glass icon for header - FLOWER ICON */
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            min-width: 80px;
+            min-height: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(129, 199, 132, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 2px solid rgba(129, 199, 132, 0.5);
+            box-shadow: 
+                0 8px 32px 0 rgba(76, 175, 80, 0.3),
+                inset 0 2px 10px rgba(255, 255, 255, 0.4);
+            font-size: 2.5em;
+            color: #4caf50;
+            transition: all 0.4s ease;
+            animation: floatIcon 4s infinite ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { 
+                transform: translateY(0px) scale(1) rotate(0deg); 
+            }
+            50% { 
+                transform: translateY(-10px) scale(1.05) rotate(5deg); 
+            }
+        }
+
+        .header-icon:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 
+                0 12px 40px 0 rgba(76, 175, 80, 0.5),
+                inset 0 2px 15px rgba(255, 255, 255, 0.5);
+            border-color: rgba(129, 199, 132, 0.8);
+        }
+            .header-icon-img {
+            padding: 8px;
+            background: transparent; 
+        }
+
+        .header-icon-img img {
+            width: 185%;
+            height: 185%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .header .subtitle {
+            color: #4caf50;
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+
+        /* Grid layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            grid-auto-rows: min-content;
+            align-items: start; 
+        }
+
+        /* Glass card base */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transition: all 0.3s ease;
+            align-self: start;
+            height: fit-content;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Card header */
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-icon {
+            font-size: 2em;
+            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            color: #4caf50;
+            transition: all 0.3s ease;
+        }
+
+        .card-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(129, 199, 132, 0.4);
+            border-color: rgba(129, 199, 132, 0.6);
+        }
+
+        .card-header h2 {
+            color: #2e7d32;
+            font-size: 1.4em;
+            font-weight: 500;
+        }
+
+        /* Plants Grid 2x2 */
+        .plants-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .plant-box {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .plant-box:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .plant-box.ready {
+            border-color: rgba(102, 187, 106, 0.8);
+            box-shadow: 0 0 15px rgba(102, 187, 106, 0.3);
+        }
+
+        .plant-box.not-ready {
+            border-color: rgba(255, 183, 77, 0.8);
+        }
+
+        .plant-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .plant-box-title {
+            font-weight: 600;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plant-status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        .badge-pending {
+            background: rgba(158, 158, 158, 0.3);
+            color: #616161;
+        }
+
+        .badge-ready {
+            background: rgba(102, 187, 106, 0.3);
+            color: #2e7d32;
+        }
+
+        .badge-not-ready {
+            background: rgba(255, 183, 77, 0.3);
+            color: #e65100;
+        }
+
+        /* Upload area */
+        .upload-area {
+            border: 3px dashed rgba(129, 199, 132, 0.5);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.15);
+            color: #37474f;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(129, 199, 132, 0.8);
+            background: rgba(129, 199, 132, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-area.dragover {
+            border-color: #4caf50;
+            background: rgba(129, 199, 132, 0.2);
+            transform: scale(1.05);
+        }
+
+        .upload-area-small {
+            padding: 20px 10px;
+        }
+
+        .upload-area-small .upload-icon {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .upload-area-small p {
+            font-size: 0.85em;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Images count badge */
+        .images-count-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(129, 199, 132, 0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #2e7d32;
+            margin-top: 10px;
+        }
+
+        /* Plant analysis mini */
+        .plant-analysis-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .mini-stat {
+            text-align: center;
+            padding: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .mini-stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .mini-stat-label {
+            font-size: 0.7em;
+            color: #546e7a;
+            text-transform: uppercase;
+        }
+
+        /* Buttons */
+        .btn {
+            background: rgba(129, 199, 132, 0.3);
+            backdrop-filter: blur(10px);
+            color: #2e7d32;
+            border: 1px solid rgba(129, 199, 132, 0.5);
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(129, 199, 132, 0.2);
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: rgba(129, 199, 132, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(129, 199, 132, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-danger {
+            background: rgba(255, 205, 210, 0.3);
+            border: 1px solid rgba(255, 205, 210, 0.5);
+            color: #c62828;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 205, 210, 0.5);
+            box-shadow: 0 6px 20px rgba(255, 205, 210, 0.4);
+        }
+
+        .btn-success {
+            background: rgba(38, 166, 154, 0.3);
+            border: 1px solid rgba(38, 166, 154, 0.5);
+            color: #00695c;
+        }
+
+        .btn-success:hover {
+            background: rgba(38, 166, 154, 0.5);
+            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.85em;
+        }
+
+        /* Action buttons row */
+        .action-buttons-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Ready summary banner */
+        .ready-summary-banner {
+            background: rgba(102, 187, 106, 0.2);
+            border: 1px solid rgba(102, 187, 106, 0.5);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ready-summary-banner.none {
+            background: rgba(158, 158, 158, 0.2);
+            border-color: rgba(158, 158, 158, 0.5);
+        }
+
+        .ready-summary-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ready-summary-info i {
+            font-size: 1.8em;
+            color: #43a047;
+        }
+
+        .ready-summary-banner.none .ready-summary-info i {
+            color: #9e9e9e;
+        }
+
+        .ready-summary-text strong {
+            color: #2e7d32;
+            font-size: 1.1em;
+        }
+
+        .ready-summary-text span {
+            color: #546e7a;
+            font-size: 0.9em;
+        }
+
+        /* Sensor grid */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            align-items: start;
+        }
+
+        .sensor-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .sensor-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .sensor-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 10px 0;
+            text-shadow: 0 2px 10px rgba(129, 199, 132, 0.3);
+        }
+
+        .sensor-label {
+            color: #546e7a;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Detection results */
+        .detection-result {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .detection-result img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .detection-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2e7d32;
+            text-shadow: 0 2px 10px rgba(129, 199, 132, 0.3);
+        }
+
+        .stat-label {
+            color: #546e7a;
+            font-size: 0.85em;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 5px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .status-active {
+            background: rgba(129, 199, 132, 0.3);
+            color: #2e7d32;
+            border: 1px solid rgba(129, 199, 132, 0.6);
+            box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
+        }
+
+        .status-inactive {
+            background: rgba(144, 202, 249, 0.3);
+            color: #1565c0;
+            border: 1px solid rgba(144, 202, 249, 0.6);
+            box-shadow: 0 4px 15px rgba(144, 202, 249, 0.3);
+        }
+
+        .status-alert {
+            background: rgba(255, 205, 210, 0.35);
+            color: #c62828;
+            border: 1px solid rgba(255, 205, 210, 0.6);
+            box-shadow: 0 4px 15px rgba(255, 205, 210, 0.3);
+        }
+
+        /* Loading spinner */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #4caf50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Image preview */
+        #imagePreview {
+            max-width: 100%;
+            border-radius: 15px;
+            margin-top: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Processed image with detections */
+        #processedImage {
+            max-width: 100%;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(129, 199, 132, 0.3);
+            border: 2px solid rgba(129, 199, 132, 0.5);
+        }
+
+        /* Image container */
+        .image-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .image-label {
+            color: #2e7d32;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .image-label i {
+            font-size: 1.3em;
+            color: #4caf50;
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(129, 199, 132, 0.4);
+            border: 1px solid rgba(129, 199, 132, 0.6);
+            box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
+            color: #2e7d32;
+        }
+
+        .alert-error {
+            background: rgba(255, 138, 128, 0.4);
+            border: 1px solid rgba(255, 138, 128, 0.6);
+            box-shadow: 0 4px 15px rgba(255, 138, 128, 0.3);
+            color: #c62828;
+        }
+
+        .alert-info {
+            background: rgba(100, 181, 246, 0.4);
+            border: 1px solid rgba(100, 181, 246, 0.6);
+            box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
+            color: #1565c0;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none;
+        }
+
+        /* Motor controls */
+        .motor-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .motor-controls button {
+            flex: 1;
+        }
+
+        /* System info */
+        .system-info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #546e7a;
+            line-height: 1.8;
+        }
+
+        .system-info p {
+            margin: 5px 0;
+        }
+
+        .system-info strong {
+            color: #2e7d32;
+        }
+    /* ========== HISTORY SLIDER - DESKTOP STYLES ========== */
+@media (min-width: 769px) {
+    .history-slider-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-height: 400px;
+        max-width: 100%;
+    }
+
+    .slider-content {
+        flex: 1;
+        overflow: hidden;
+        border-radius: 15px;
+        max-width: calc(100% - 120px); /* Espacio para las flechas */
+    }
+
+    .slider-arrow {
+        position: relative;
+        top: auto;
+        transform: none;
+        flex-shrink: 0;
+    }
+
+    .history-slide {
+        padding: 25px;
+        height: auto;
+    }
+
+    .slide-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .slide-image-container {
+        width: 100%;
+        max-height: 350px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .slide-image {
+        max-width: 100%;
+        max-height: 350px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .slide-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-height: 350px;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    /* Scrollbar estilizado para stats en PC */
+    .slide-stats::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .slide-stats::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .slide-stats::-webkit-scrollbar-thumb {
+        background: rgba(129, 199, 132, 0.5);
+        border-radius: 3px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    /* Asegurar que el card del historial ocupe 2 columnas */
+    .glass-card.grid-span-2 {
+        grid-column: span 2;
+    }
+}
+
+/* ========== TABLET STYLES ========== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .slide-body {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .slide-image-container {
+        max-height: 280px;
+    }
+
+    .slide-image {
+        max-height: 280px;
+    }
+
+    .slide-stats {
+        max-height: none;
+        overflow-y: visible;
+    }
+}
+
+/* Responsive Styles (Final Mobile Version) */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Dashboard Layout - Stacked Vertical */
+        .dashboard-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Force full width on mobile */
+        .grid-span-2 {
+            width: 100%;
+        }
+
+        .sensor-grid,
+        .plants-grid {
+            grid-template-columns: 1fr;
+        }
+
+        /* Header Adjustments */
+        .header {
+            padding: 20px 15px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            min-height: 60px;
+            font-size: 2em;
+        }
+
+        .header .subtitle {
+            font-size: 0.9em;
+            padding: 0 10px;
+        }
+
+        /* History Slider Mobile Layout */
+        .history-slider-container {
+            display: block;       /* Override flex from PC */
+            width: 100%;
+            padding-bottom: 60px; /* Space for bottom arrows */
+            min-height: auto;     /* Let height adjust naturally */
+            box-sizing: border-box;
+        }
+
+        .slider-content {
+            width: 100%;
+            margin: 0;
+        }
+
+        .history-slide {
+            padding: 15px;
+            height: auto; /* Reset fixed height */
+        }
+        
+        /* Stack: Image Top, Stats Bottom */
+        .slide-body {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .slide-image-container {
+            width: 100%;
+            height: 220px; /* Mobile specific height */
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border: none;
+        }
+
+        .slide-stats {
+            width: 100%;
+            height: auto !important; /* Remove PC scrollbar/height */
+            overflow: visible;
+            padding-right: 0;
+        }
+
+        /* Arrows Bottom Center for Mobile */
+        .slider-arrow {
+            position: absolute;
+            bottom: 0;
+            top: auto;
+            transform: none;
+            width: 45px; 
+            height: 45px;
+            z-index: 10;
+            background: rgba(129, 199, 132, 0.9);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .slider-prev {
+            left: 30%;
+        }
+
+        .slider-next {
+            right: 30%;
+        }
+    }
+
+        @media (max-width: 1024px) {
+            .grid-span-2 {
+                grid-column: span 1;
+            }
+        }
+
+        /* Text colors */
+        p, div {
+            color: #37474f;
+        }
+
+        strong {
+            color: #2e7d32;
+        }
+
+        /* Links */
+        a {
+            color: #4caf50;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: #2e7d32;
+            text-shadow: 0 0 10px rgba(129, 199, 132, 0.5);
+        }
+
+        /* Compression info badge */
+        .compression-info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.4);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #1565c0;
+            text-align: center;
+            display: none;
+        }
+
+        .compression-info.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .loading-content .loader {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+        }
+
+        .loading-text {
+            color: #37474f;
+            font-size: 1.1em;
+        }
+
+        /* ========== HISTORY SLIDER STYLES ========== */
+        .history-slider-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 350px;
+        }
+
+        .slider-content {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .slider-arrow {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(129, 199, 132, 0.3);
+            border: 1px solid rgba(129, 199, 132, 0.5);
+            color: #2e7d32;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .slider-arrow:hover:not(:disabled) {
+            background: rgba(129, 199, 132, 0.5);
+            transform: scale(1.1);
+        }
+
+        .slider-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slider-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider-dot.active {
+            background: rgba(129, 199, 132, 0.8);
+            border-color: #4caf50;
+            transform: scale(1.2);
+        }
+
+        .slider-dot:hover {
+            background: rgba(129, 199, 132, 0.5);
+        }
+
+        .slider-counter {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #546e7a;
+        }
+
+        /* Slide Card */
+        .history-slide {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .slide-title {
+            font-weight: 600;
+            color: #2e7d32;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slide-timestamp {
+            font-size: 0.85em;
+            color: #546e7a;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .slide-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .slide-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Image Section */
+        .slide-image-container {
+            position: relative;
+        }
+
+        .slide-image {
+            width: 100%;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(129, 199, 132, 0.3);
+        }
+
+        .slide-image:hover {
+            transform: scale(1.02);
+            border-color: rgba(129, 199, 132, 0.6);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9e9e9e;
+            font-size: 0.9em;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .view-full-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-full-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Stats Section */
+        .slide-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .stats-section-title {
+            font-size: 0.85em;
+            color: #546e7a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+        }
+
+        .stat-box-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .stat-box-label {
+            font-size: 0.7em;
+            color: #78909c;
+            text-transform: uppercase;
+        }
+
+        /* Color coding for stats */
+        .stat-box.flowers-ready .stat-box-value { color: #43a047; }
+        .stat-box.flowers-developing .stat-box-value { color: #fb8c00; }
+        .stat-box.flowers-nopollen .stat-box-value { color: #78909c; }
+        .stat-box.fruits-green .stat-box-value { color: #66bb6a; }
+        .stat-box.fruits-mixed .stat-box-value { color: #ffa726; }
+        .stat-box.fruits-red .stat-box-value { color: #ef5350; }
+
+        /* Motor status badge in slide */
+        .motor-status-slide {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .motor-status-slide.activated {
+            background: rgba(102, 187, 106, 0.2);
+            border: 1px solid rgba(102, 187, 106, 0.5);
+            color: #2e7d32;
+        }
+
+        .motor-status-slide.not-activated {
+            background: rgba(158, 158, 158, 0.2);
+            border: 1px solid rgba(158, 158, 158, 0.5);
+            color: #616161;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .image-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 10px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .modal-info {
+            color: white;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        /* Empty state */
+        .history-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #78909c;
+        }
+
+        .history-empty i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        /* ========== ENVIRONMENTAL STATUS STYLES ========== */
+.ready-summary-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+}
+
+.ready-summary-main {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.ready-summary-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.env-section {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.env-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.env-status-optimal {
+    background: rgba(102, 187, 106, 0.25);
+    border: 1px solid rgba(102, 187, 106, 0.5);
+    color: #2e7d32;
+}
+
+.env-status-acceptable {
+    background: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.5);
+    color: #f57f17;
+}
+
+.env-status-marginal {
+    background: rgba(255, 152, 0, 0.25);
+    border: 1px solid rgba(255, 152, 0, 0.5);
+    color: #e65100;
+}
+
+.env-status-bad {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.5);
+    color: #c62828;
+}
+
+.env-status-unknown {
+    background: rgba(158, 158, 158, 0.2);
+    border: 1px solid rgba(158, 158, 158, 0.5);
+    color: #616161;
+}
+
+.env-status-icon {
+    font-size: 1.3em;
+}
+
+.env-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.env-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: help;
+    transition: all 0.2s ease;
+}
+
+.env-indicator:hover {
+    transform: scale(1.05);
+}
+
+.env-indicator.env-ok {
+    background: rgba(102, 187, 106, 0.2);
+    border: 1px solid rgba(102, 187, 106, 0.4);
+    color: #2e7d32;
+}
+
+.env-indicator.env-warning {
+    background: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    color: #f57f17;
+}
+
+.env-indicator.env-danger {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.4);
+    color: #c62828;
+}
+
+.env-warnings {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(244, 67, 54, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #f44336;
+}
+
+.env-warnings.mild {
+    background: rgba(255, 193, 7, 0.1);
+    border-left-color: #ffc107;
+}
+
+.env-warning-item {
+    font-size: 0.85em;
+    color: #c62828;
+    padding: 4px 0;
+}
+
+.env-warnings.mild .env-warning-item {
+    color: #f57f17;
+}
+
+.btn-warning-state {
+    background: rgba(255, 152, 0, 0.3) !important;
+    border-color: rgba(255, 152, 0, 0.5) !important;
+    color: #e65100 !important;
+}
+
+.btn-warning-state:hover {
+    background: rgba(255, 152, 0, 0.5) !important;
+}
+
+/* Responsive adjustments */
+@media (min-width: 769px) {
+    .ready-summary-banner {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    
+    .ready-summary-main {
+        flex: 1;
+    }
+    
+    .ready-summary-actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .env-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .env-status {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .env-indicators {
+        justify-content: center;
+    }
+    
+    .env-indicator {
+        font-size: 0.8em;
+        padding: 5px 10px;
+    }
+    
+    .ready-summary-actions {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .ready-summary-actions .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <div class="header-icon header-icon-img">
+                    <img src="/static/tomato.png" alt="Logo">
+                </div>
+                Monitor de Tomates
+            </h1>
+            <p class="subtitle">Diseñado por los alumnos: Arellano Ramírez José Arturo Y Serrano Flores Kevin Yeudiel </p>
+        </div>
+
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Upload & Detection Card - Grid 2x2 -->
+            <div class="glass-card grid-span-2">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-camera-fill"></i>
+                    </div>
+                    <h2>Detección YOLO - 4 Plantas</h2>
+                </div>
+
+                <!-- Ready Summary Banner -->
+                <div id="readySummaryBanner" class="ready-summary-banner none">
+                    <div class="ready-summary-info">
+                        <i class="bi bi-info-circle"></i>
+                        <div class="ready-summary-text">
+                            <strong id="readyCountText">0 plantas listas</strong><br>
+                            <span id="readyListText">Sube fotos y presiona "Analizar Todo"</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plants Grid 2x2 -->
+                <div class="plants-grid">
+                    <!-- Planta 1 -->
+                    <div class="plant-box" id="plant-box-1">
+                        <div class="plant-box-header">
+                            <div class="plant-box-title">
+                                <i class="bi bi-flower1"></i> Planta 1
+                            </div>
+                            <span class="plant-status-badge badge-pending" id="badge-1">Sin analizar</span>
+                        </div>
+                        <div class="upload-area upload-area-small" data-plant="1" id="upload-1">
+                            <div class="upload-icon"><i class="bi bi-cloud-upload"></i></div>
+                            <p><strong>Arrastra fotos</strong> o clic</p>
+                        </div>
+                        <input type="file" class="file-input" id="file-1" accept="image/*" capture="environment" multiple>
+                        <div id="images-info-1"></div>
+                        <div class="plant-analysis-mini" id="analysis-1" style="display:none;">
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="flowers-1">0</div>
+                                <div class="mini-stat-label">Listas</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="total-1">0</div>
+                                <div class="mini-stat-label">Total</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="fruits-1">0</div>
+                                <div class="mini-stat-label">Frutos</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-small btn-danger" style="width:100%; margin-top:10px;" onclick="clearPlant(1)">
+                            <i class="bi bi-x"></i> Limpiar
+                        </button>
+                    </div>
+
+                    <!-- Planta 2 -->
+                    <div class="plant-box" id="plant-box-2">
+                        <div class="plant-box-header">
+                            <div class="plant-box-title">
+                                <i class="bi bi-flower1"></i> Planta 2
+                            </div>
+                            <span class="plant-status-badge badge-pending" id="badge-2">Sin analizar</span>
+                        </div>
+                        <div class="upload-area upload-area-small" data-plant="2" id="upload-2">
+                            <div class="upload-icon"><i class="bi bi-cloud-upload"></i></div>
+                            <p><strong>Arrastra fotos</strong> o clic</p>
+                        </div>
+                        <input type="file" class="file-input" id="file-2" accept="image/*" capture="environment" multiple>
+                        <div id="images-info-2"></div>
+                        <div class="plant-analysis-mini" id="analysis-2" style="display:none;">
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="flowers-2">0</div>
+                                <div class="mini-stat-label">Listas</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="total-2">0</div>
+                                <div class="mini-stat-label">Total</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="fruits-2">0</div>
+                                <div class="mini-stat-label">Frutos</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-small btn-danger" style="width:100%; margin-top:10px;" onclick="clearPlant(2)">
+                            <i class="bi bi-x"></i> Limpiar
+                        </button>
+                    </div>
+
+                    <!-- Planta 3 -->
+                    <div class="plant-box" id="plant-box-3">
+                        <div class="plant-box-header">
+                            <div class="plant-box-title">
+                                <i class="bi bi-flower1"></i> Planta 3
+                            </div>
+                            <span class="plant-status-badge badge-pending" id="badge-3">Sin analizar</span>
+                        </div>
+                        <div class="upload-area upload-area-small" data-plant="3" id="upload-3">
+                            <div class="upload-icon"><i class="bi bi-cloud-upload"></i></div>
+                            <p><strong>Arrastra fotos</strong> o clic</p>
+                        </div>
+                        <input type="file" class="file-input" id="file-3" accept="image/*" capture="environment" multiple>
+                        <div id="images-info-3"></div>
+                        <div class="plant-analysis-mini" id="analysis-3" style="display:none;">
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="flowers-3">0</div>
+                                <div class="mini-stat-label">Listas</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="total-3">0</div>
+                                <div class="mini-stat-label">Total</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="fruits-3">0</div>
+                                <div class="mini-stat-label">Frutos</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-small btn-danger" style="width:100%; margin-top:10px;" onclick="clearPlant(3)">
+                            <i class="bi bi-x"></i> Limpiar
+                        </button>
+                    </div>
+
+                    <!-- Planta 4 -->
+                    <div class="plant-box" id="plant-box-4">
+                        <div class="plant-box-header">
+                            <div class="plant-box-title">
+                                <i class="bi bi-flower1"></i> Planta 4
+                            </div>
+                            <span class="plant-status-badge badge-pending" id="badge-4">Sin analizar</span>
+                        </div>
+                        <div class="upload-area upload-area-small" data-plant="4" id="upload-4">
+                            <div class="upload-icon"><i class="bi bi-cloud-upload"></i></div>
+                            <p><strong>Arrastra fotos</strong> o clic</p>
+                        </div>
+                        <input type="file" class="file-input" id="file-4" accept="image/*" capture="environment" multiple>
+                        <div id="images-info-4"></div>
+                        <div class="plant-analysis-mini" id="analysis-4" style="display:none;">
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="flowers-4">0</div>
+                                <div class="mini-stat-label">Listas</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="total-4">0</div>
+                                <div class="mini-stat-label">Total</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-stat-value" id="fruits-4">0</div>
+                                <div class="mini-stat-label">Frutos</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-small btn-danger" style="width:100%; margin-top:10px;" onclick="clearPlant(4)">
+                            <i class="bi bi-x"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons-row">
+                    <button class="btn" id="btnAnalyze" onclick="analyzeAll()">
+                        <i class="bi bi-search"></i> Analizar Todo
+                    </button>
+                    <button class="btn btn-success" id="btnPollinate" onclick="pollinateReady()" disabled>
+                        <i class="bi bi-flower1"></i> Polinizar Listas
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAll()">
+                        <i class="bi bi-trash"></i> Limpiar Todo
+                    </button>
+                </div>
+
+                <div id="loadingIndicator" class="hidden">
+                    <div class="loader"></div>
+                    <p style="text-align: center; color: #546e7a;">Procesando...</p>
+                </div>
+            </div>
+
+            <!-- Sensors Card -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-thermometer-half"></i>
+                    </div>
+                    <h2>Sensores MiFlora</h2>
+                </div>
+                
+                <div class="sensor-grid" id="sensorGrid">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+
+                <button class="btn" style="width: 100%; margin-top: 15px;" onclick="loadSensors()">
+                    <i class="bi bi-arrow-clockwise"></i> Actualizar Sensores
+                </button>
+            </div>
+
+            <!-- Motor Control Card -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-gear-fill"></i>
+                    </div>
+                    <h2>Control de Motor</h2>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div class="status-badge status-inactive" id="motorCurrentStatus">
+                        Estado: Inactivo
+                    </div>
+                </div>
+
+                <div class="motor-controls">
+                    <button class="btn" onclick="motorHome()">
+                        <i class="bi bi-house"></i> Home
+                    </button>
+                    <button class="btn btn-danger" onclick="stopMotor()">
+                        <i class="bi bi-stop-fill"></i> STOP
+                    </button>
+                </div>
+
+                <div class="motor-controls" style="margin-top: 10px;">
+                    <button class="btn" onclick="testSignal()" style="width: 100%;">
+                        <i class="bi bi-lightning"></i> Test Señal (2s)
+                    </button>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <p style="text-align: center; font-size: 0.9em;">
+                        <strong>Activaciones:</strong> <span id="totalActivations">0</span>
+                    </p>
+                    <p style="text-align: center; font-size: 0.9em;">
+                        <strong>Posición:</strong> <span id="motorPosition">0 mm</span>
+                    </p>
+                    <p style="text-align: center; font-size: 0.9em;">
+                        <strong>Pin Señal:</strong> <span id="signalPin">GPIO24</span>
+                    </p>
+                    <p style="text-align: center; font-size: 0.9em;">
+                        <strong>Última:</strong><br><span id="lastActivation">-</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Detection History - SLIDER -->
+            <div class="glass-card grid-span-2">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h2>Historial de Detecciones</h2>
+                </div>
+
+                <!-- Slider Container -->
+                <div class="history-slider-container">
+                    <!-- Navigation Arrows -->
+                    <button class="slider-arrow slider-prev" onclick="prevSlide()" id="prevBtn">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    
+                    <div class="slider-content" id="historySlider">
+                        <p style="text-align: center;">Cargando historial...</p>
+                    </div>
+                    
+                    <button class="slider-arrow slider-next" onclick="nextSlide()" id="nextBtn">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Slide Indicators -->
+                <div class="slider-indicators" id="sliderIndicators"></div>
+
+                <!-- Slide Counter -->
+                <div class="slider-counter">
+                    <span id="currentSlide">0</span> / <span id="totalSlides">0</span>
+                </div>
+
+                <button class="btn" style="width: 100%; margin-top: 15px;" onclick="loadHistory()">
+                    <i class="bi bi-arrow-clockwise"></i> Actualizar Historial
+                </button>
+            </div>
+
+            <!-- System Status -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <h2>Estado del Sistema</h2>
+                </div>
+
+                <div id="systemStatus" style="margin-bottom: 15px;">
+                    <div class="status-badge status-active">Sistema: Online</div>
+                    <div class="status-badge status-active" id="yoloStatus">YOLO: ✓</div>
+                    <div class="status-badge status-active" id="csvStatus">Sensores: ✓</div>
+                </div>
+
+                <div class="system-info">
+                    <p><strong>Raspberry Pi:</strong> Raspberry Pi 5</p>
+                    <p><strong>Sistema:</strong> Raspberry Pi OS</p>
+                    <p><strong>Modelo YOLO:</strong> YOLOv8 (6 clases)</p>
+                    <p><strong>Sensores:</strong> 4 MiFlora</p>
+                    <p><strong>Versión:</strong> 3.0.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader"></div>
+            <div class="loading-text" id="loadingText">Procesando...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        
+        // Estado local
+        let plantsState = {
+            1: { images: 0, ready: false, analysis: null },
+            2: { images: 0, ready: false, analysis: null },
+            3: { images: 0, ready: false, analysis: null },
+            4: { images: 0, ready: false, analysis: null }
+        };
+
+        // ========== HISTORY SLIDER STATE ==========
+        let historyData = [];
+        let currentSlideIndex = 0;
+
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            setupUploadAreas();
+            loadPlantsState();
+            loadSensors();
+            loadMotorStatus();
+            loadHistory();
+            checkHealth();
+            
+            setInterval(() => {
+                loadSensors();
+                loadMotorStatus();
+                checkHealth();
+            }, 10000);
+        });
+
+        // ========== SETUP UPLOAD AREAS ==========
+        function setupUploadAreas() {
+            for (let plantId = 1; plantId <= 4; plantId++) {
+                const uploadArea = document.getElementById(`upload-${plantId}`);
+                const fileInput = document.getElementById(`file-${plantId}`);
+                
+                uploadArea.addEventListener('click', () => fileInput.click());
+                
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('dragover');
+                });
+                
+                uploadArea.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+                    if (files.length > 0) {
+                        await uploadFiles(plantId, files);
+                    }
+                });
+                
+                fileInput.addEventListener('change', async (e) => {
+                    const files = Array.from(e.target.files);
+                    if (files.length > 0) {
+                        await uploadFiles(plantId, files);
+                    }
+                    e.target.value = '';
+                });
+            }
+        }
+
+        // ========== COMPRESS IMAGE ==========
+        async function compressImage(file, maxWidth = 1024, maxHeight = 768, quality = 0.65) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                        
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                            } else {
+                                reject(new Error('Compression failed'));
+                            }
+                        }, 'image/jpeg', quality);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ========== UPLOAD FILES ==========
+        async function uploadFiles(plantId, files) {
+            showLoading(`Subiendo ${files.length} imagen(es) a Planta ${plantId}...`);
+            
+            try {
+                for (const file of files) {
+                    const compressed = await compressImage(file);
+                    const formData = new FormData();
+                    formData.append('file', compressed);
+                    
+                    const response = await fetch(`${API_URL}/api/plants/${plantId}/images`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Error subiendo ${file.name}`);
+                    }
+                }
+                
+                hideLoading();
+                showAlert(`<i class="bi bi-check-circle-fill"></i> ${files.length} imagen(es) subida(s) a Planta ${plantId}`, 'success');
+                await loadPlantsState();
+                
+            } catch (error) {
+                hideLoading();
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        // ========== LOAD PLANTS STATE ==========
+        async function loadPlantsState() {
+            try {
+                const response = await fetch(`${API_URL}/api/plants`);
+                const plants = await response.json();
+                
+                let readyCount = 0;
+                let readyList = [];
+                
+                for (let plantId = 1; plantId <= 4; plantId++) {
+                    const plant = plants[plantId];
+                    const box = document.getElementById(`plant-box-${plantId}`);
+                    const badge = document.getElementById(`badge-${plantId}`);
+                    const imagesInfo = document.getElementById(`images-info-${plantId}`);
+                    const analysis = document.getElementById(`analysis-${plantId}`);
+                    
+                    plantsState[plantId] = {
+                        images: plant.images_count,
+                        ready: plant.ready,
+                        analysis: plant.analysis_summary
+                    };
+                    
+                    // Update box class
+                    box.classList.remove('ready', 'not-ready');
+                    
+                    if (plant.images_count === 0) {
+                        badge.textContent = 'Sin fotos';
+                        badge.className = 'plant-status-badge badge-pending';
+                    } else if (plant.ready) {
+                        box.classList.add('ready');
+                        badge.textContent = '✓ Lista';
+                        badge.className = 'plant-status-badge badge-ready';
+                        readyCount++;
+                        readyList.push(plantId);
+                    } else if (plant.analyzed) {
+                        box.classList.add('not-ready');
+                        badge.textContent = 'No lista';
+                        badge.className = 'plant-status-badge badge-not-ready';
+                    } else {
+                        badge.textContent = 'Sin analizar';
+                        badge.className = 'plant-status-badge badge-pending';
+                    }
+                    
+                    // Update images count
+                    if (plant.images_count > 0) {
+                        imagesInfo.innerHTML = `
+                            <div class="images-count-badge">
+                                <i class="bi bi-images"></i> ${plant.images_count} foto(s)
+                            </div>
+                        `;
+                    } else {
+                        imagesInfo.innerHTML = '';
+                    }
+                    
+                    // Update analysis
+                    if (plant.analysis_summary) {
+                        analysis.style.display = 'grid';
+                        document.getElementById(`flowers-${plantId}`).textContent = 
+                            plant.analysis_summary.flowers?.Lista_para_polinizar || 0;
+                        document.getElementById(`total-${plantId}`).textContent = 
+                            plant.analysis_summary.total_objects || 0;
+                        const totalFruits = Object.values(plant.analysis_summary.fruits || {}).reduce((a, b) => a + b, 0);
+                        document.getElementById(`fruits-${plantId}`).textContent = totalFruits;
+                    } else {
+                        analysis.style.display = 'none';
+                    }
+                }
+                
+                // Update ready summary
+                updateReadySummary(readyCount, readyList);
+                
+                // Enable/disable pollinate button
+                document.getElementById('btnPollinate').disabled = readyCount === 0;
+                
+            } catch (error) {
+                console.error('Error loading plants state:', error);
+            }
+        }
+
+        // ========== UPDATE READY SUMMARY WITH ENVIRONMENTAL CHECK ==========
+async function updateReadySummary(count, list) {
+    const banner = document.getElementById('readySummaryBanner');
+    
+    if (count === 0) {
+        banner.classList.add('none');
+        banner.innerHTML = `
+            <div class="ready-summary-info">
+                <i class="bi bi-info-circle"></i>
+                <div class="ready-summary-text">
+                    <strong>0 plantas listas</strong><br>
+                    <span>Sube fotos y presiona "Analizar Todo"</span>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Obtener verificación ambiental
+    let envCheck = null;
+    let envHTML = '';
+    
+    try {
+        const response = await fetch(`${API_URL}/api/environmental-check`);
+        envCheck = await response.json();
+        
+        if (envCheck.status === 'success' && envCheck.verificacion) {
+            const v = envCheck.verificacion;
+            const condiciones = v.condiciones || {};
+            
+            // Construir indicadores de condiciones
+            let indicators = [];
+            
+            // Temperatura
+            if (condiciones.temperatura && condiciones.temperatura.valor !== null) {
+                const temp = condiciones.temperatura;
+                const tempIcon = temp.estado === 'optimo' ? '✅' : 
+                                temp.estado === 'aceptable' ? '⚠️' : '❌';
+                const tempClass = temp.estado === 'optimo' ? 'env-ok' : 
+                                 temp.estado === 'aceptable' ? 'env-warning' : 'env-danger';
+                indicators.push(`
+                    <span class="env-indicator ${tempClass}" title="${temp.rango_optimo}">
+                        ${tempIcon} ${temp.valor}°C
+                    </span>
+                `);
+            }
+            
+            // Humedad
+            if (condiciones.humedad && condiciones.humedad.valor !== null) {
+                const hum = condiciones.humedad;
+                const humIcon = hum.estado === 'optimo' ? '✅' : 
+                               hum.estado === 'aceptable' ? '⚠️' : '❌';
+                const humClass = hum.estado === 'optimo' ? 'env-ok' : 
+                                hum.estado === 'aceptable' ? 'env-warning' : 'env-danger';
+                indicators.push(`
+                    <span class="env-indicator ${humClass}" title="${hum.rango_optimo}">
+                        ${humIcon} 💧${hum.valor}%
+                    </span>
+                `);
+            }
+            
+            // Luz
+            if (condiciones.luz && condiciones.luz.valor !== null) {
+                const luz = condiciones.luz;
+                const luzIcon = luz.estado === 'optimo' ? '✅' : 
+                               luz.estado === 'aceptable' ? '⚠️' : '❌';
+                const luzClass = luz.estado === 'optimo' ? 'env-ok' : 
+                                luz.estado === 'aceptable' ? 'env-warning' : 'env-danger';
+                indicators.push(`
+                    <span class="env-indicator ${luzClass}" title="${luz.rango_optimo}">
+                        ${luzIcon} ☀️${(luz.valor/1000).toFixed(1)}k lux
+                    </span>
+                `);
+            }
+            
+            // Conductividad
+            if (condiciones.conductividad && condiciones.conductividad.valor !== null) {
+                const ec = condiciones.conductividad;
+                const ecIcon = ec.estado === 'optimo' ? '✅' : 
+                              ec.estado === 'aceptable' ? '⚠️' : '❌';
+                const ecClass = ec.estado === 'optimo' ? 'env-ok' : 
+                               ec.estado === 'aceptable' ? 'env-warning' : 'env-danger';
+                indicators.push(`
+                    <span class="env-indicator ${ecClass}" title="${ec.rango_optimo}">
+                        ${ecIcon} ⚡${ec.valor} µS
+                    </span>
+                `);
+            }
+            
+            // Determinar estado general y mensaje
+            const puedePolinizar = v.puede_polinizar;
+            const nivelConfianza = v.nivel_confianza;
+            
+            let statusClass = '';
+            let statusIcon = '';
+            let statusText = '';
+            
+            if (puedePolinizar) {
+                if (nivelConfianza === 'optimo') {
+                    statusClass = 'env-status-optimal';
+                    statusIcon = '🌟';
+                    statusText = 'Condiciones óptimas';
+                } else if (nivelConfianza === 'aceptable') {
+                    statusClass = 'env-status-acceptable';
+                    statusIcon = '👍';
+                    statusText = 'Condiciones aceptables';
+                } else {
+                    statusClass = 'env-status-marginal';
+                    statusIcon = '⚠️';
+                    statusText = 'Condiciones marginales';
+                }
+            } else {
+                statusClass = 'env-status-bad';
+                statusIcon = '⚠️';
+                statusText = 'No recomendado polinizar';
+            }
+            
+            // Construir advertencias si existen
+            let warningsHTML = '';
+            if (v.problemas && v.problemas.length > 0) {
+                warningsHTML = `
+                    <div class="env-warnings">
+                        ${v.problemas.map(p => `<div class="env-warning-item">⚠️ ${p}</div>`).join('')}
+                    </div>
+                `;
+            } else if (v.advertencias && v.advertencias.length > 0) {
+                warningsHTML = `
+                    <div class="env-warnings mild">
+                        ${v.advertencias.slice(0, 2).map(a => `<div class="env-warning-item">💡 ${a}</div>`).join('')}
+                    </div>
+                `;
+            }
+            
+            envHTML = `
+                <div class="env-section">
+                    <div class="env-status ${statusClass}">
+                        <span class="env-status-icon">${statusIcon}</span>
+                        <span class="env-status-text">${statusText}</span>
+                    </div>
+                    <div class="env-indicators">
+                        ${indicators.join('')}
+                    </div>
+                    ${warningsHTML}
+                </div>
+            `;
+        } else if (envCheck.status === 'no_data') {
+            envHTML = `
+                <div class="env-section">
+                    <div class="env-status env-status-unknown">
+                        <span class="env-status-icon">❓</span>
+                        <span class="env-status-text">Sin datos de sensores</span>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error fetching environmental check:', error);
+        envHTML = `
+            <div class="env-section">
+                <div class="env-status env-status-unknown">
+                    <span class="env-status-icon">⚠️</span>
+                    <span class="env-status-text">No se pudo verificar ambiente</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Determinar si el botón debe estar habilitado
+    const canPollinate = !envCheck || envCheck.status !== 'success' || 
+                         envCheck.verificacion?.puede_polinizar !== false;
+    
+    banner.classList.remove('none');
+    banner.innerHTML = `
+        <div class="ready-summary-main">
+            <div class="ready-summary-info">
+                <i class="bi bi-check-circle-fill" style="color: #43a047; font-size: 2em;"></i>
+                <div class="ready-summary-text">
+                    <strong>${count} planta(s) lista(s) para polinizar</strong><br>
+                    <span>Plantas: ${list.join(', ')}</span>
+                </div>
+            </div>
+            ${envHTML}
+        </div>
+        <div class="ready-summary-actions">
+            <button class="btn btn-success ${!canPollinate ? 'btn-warning-state' : ''}" 
+                    onclick="pollinateReady()" 
+                    ${!canPollinate ? 'title="Condiciones no óptimas - polinizar bajo tu responsabilidad"' : ''}>
+                <i class="bi bi-flower1"></i> 
+                ${canPollinate ? 'Polinizar Ahora' : 'Polinizar (No recomendado)'}
+            </button>
+            ${!canPollinate ? `
+                <button class="btn btn-small" onclick="pollinateReady(true)" 
+                        title="Ignorar condiciones ambientales">
+                    <i class="bi bi-exclamation-triangle"></i> Forzar
+                </button>
+            ` : ''}
+        </div>
+    `;
+}
+
+        // ========== ANALYZE ALL ==========
+        async function analyzeAll() {
+            showLoading('Analizando todas las plantas con YOLO...');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/analyze-all`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.status === 'success') {
+                    await loadPlantsState();
+                    loadHistory();
+                    
+                    if (data.ready_plants.length > 0) {
+                        showAlert(`<i class="bi bi-check-circle-fill"></i> Análisis completo. ${data.ready_plants.length} planta(s) lista(s): ${data.ready_plants.join(', ')}`, 'success');
+                    } else {
+                        showAlert('<i class="bi bi-info-circle"></i> Análisis completo. Ninguna planta lista para polinizar.', 'info');
+                    }
+                } else {
+                    showAlert('<i class="bi bi-x-circle-fill"></i> Error en análisis', 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        // ========== POLLINATE READY ==========
+async function pollinateReady(forceIgnoreConditions = false) {
+    const readyPlants = [];
+    for (let i = 1; i <= 4; i++) {
+        if (plantsState[i].ready) readyPlants.push(i);
+    }
+    
+    if (readyPlants.length === 0) {
+        showAlert('<i class="bi bi-info-circle"></i> No hay plantas listas para polinizar', 'info');
+        return;
+    }
+    
+    // Verificar condiciones antes de confirmar
+    let envWarning = '';
+    if (!forceIgnoreConditions) {
+        try {
+            const envResponse = await fetch(`${API_URL}/api/environmental-check`);
+            const envCheck = await envResponse.json();
+            
+            if (envCheck.status === 'success' && !envCheck.verificacion?.puede_polinizar) {
+                const problemas = envCheck.verificacion?.problemas || [];
+                envWarning = `\n\n⚠️ ADVERTENCIA DE CONDICIONES:\n${problemas.join('\n')}\n\n¿Desea continuar de todos modos?`;
+            }
+        } catch (e) {
+            console.error('Error checking conditions:', e);
+        }
+    }
+    
+    const confirmMsg = forceIgnoreConditions 
+        ? `⚠️ FORZAR POLINIZACIÓN\n\nSe ignorarán las condiciones ambientales.\n\n¿Polinizar plantas ${readyPlants.join(', ')}?`
+        : `¿Iniciar polinización de plantas ${readyPlants.join(', ')}?\n\nSecuencia por planta:\n• Mover a posición\n• Delay 2 segundos\n• Señal vibración 5 segundos\n• Siguiente planta\n• Regresar a home${envWarning}`;
+    
+    if (!confirm(confirmMsg)) {
+        return;
+    }
+    
+    showLoading(`Polinizando plantas ${readyPlants.join(', ')}...`);
+    
+    try {
+        const ignorarCondiciones = forceIgnoreConditions ? 'true' : 'true'; // Por ahora siempre true según tu config
+        const response = await fetch(`${API_URL}/api/pollinate-ready?ignorar_condiciones=${ignorarCondiciones}`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        hideLoading();
+        
+        if (data.status === 'success') {
+            let msg = `<i class="bi bi-check-circle-fill"></i> Polinización completada: plantas ${data.plantas_polinizadas.join(', ')}`;
+            if (data.simulation_mode) {
+                msg += '<br><small>⚠️ Modo simulación - hardware no conectado</small>';
+            }
+            showAlert(msg, 'success');
+            loadMotorStatus();
+            loadHistory();
+        } else if (data.status === 'condiciones_no_optimas') {
+            showAlert(`<i class="bi bi-exclamation-triangle"></i> ${data.message}<br><small>Usa "Forzar" para ignorar condiciones</small>`, 'error');
+        } else {
+            showAlert(`<i class="bi bi-x-circle-fill"></i> ${data.message || 'Error en polinización'}`, 'error');
+        }
+    } catch (error) {
+        hideLoading();
+        showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+    }
+}
+        // ========== CLEAR PLANT ==========
+        async function clearPlant(plantId) {
+            if (!confirm(`¿Eliminar todas las imágenes de Planta ${plantId}?`)) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/plants/${plantId}/images`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showAlert(`<i class="bi bi-check-circle-fill"></i> Planta ${plantId} limpiada`, 'success');
+                    await loadPlantsState();
+                }
+            } catch (error) {
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        // ========== CLEAR ALL ==========
+        async function clearAll() {
+            if (!confirm('¿Eliminar TODAS las imágenes de TODAS las plantas?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/plants/clear-all`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showAlert('<i class="bi bi-check-circle-fill"></i> Todas las plantas limpiadas', 'success');
+                    await loadPlantsState();
+                }
+            } catch (error) {
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        // ========== MOTOR FUNCTIONS ==========
+        async function motorHome() {
+            showLoading('Enviando motor a home...');
+            try {
+                const response = await fetch(`${API_URL}/api/motor/home`, { method: 'POST' });
+                hideLoading();
+                if (response.ok) {
+                    showAlert('<i class="bi bi-house"></i> Motor en posición home', 'success');
+                    loadMotorStatus();
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function stopMotor() {
+            try {
+                const response = await fetch(`${API_URL}/api/motor/stop`, { method: 'POST' });
+                if (response.ok) {
+                    showAlert('<i class="bi bi-stop-fill"></i> Motor detenido', 'success');
+                    loadMotorStatus();
+                }
+            } catch (error) {
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSignal() {
+            showLoading('Probando señal externa (2s)...');
+            try {
+                const response = await fetch(`${API_URL}/api/motor/test-signal?duration=2`, { method: 'POST' });
+                hideLoading();
+                if (response.ok) {
+                    showAlert('<i class="bi bi-lightning"></i> Test de señal completado', 'success');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert(`<i class="bi bi-x-circle-fill"></i> Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadMotorStatus() {
+            try {
+                const response = await fetch(`${API_URL}/api/motor/status`);
+                const status = await response.json();
+                
+                const statusBadge = document.getElementById('motorCurrentStatus');
+                if (status.is_active) {
+                    statusBadge.innerHTML = '<i class="bi bi-play-fill"></i> Estado: Activo';
+                    statusBadge.className = 'status-badge status-active';
+                } else {
+                    statusBadge.textContent = 'Estado: Inactivo';
+                    statusBadge.className = 'status-badge status-inactive';
+                }
+                
+                document.getElementById('totalActivations').textContent = status.total_activations || 0;
+                document.getElementById('motorPosition').textContent = 
+                    `${(status.posicion_horizontal_mm || 0).toFixed(1)} mm`;
+                document.getElementById('signalPin').textContent = status.signal_pin || 'GPIO24';
+                document.getElementById('lastActivation').textContent = 
+                    status.last_activation ? new Date(status.last_activation).toLocaleString() : '-';
+            } catch (error) {
+                console.error('Error loading motor status:', error);
+            }
+        }
+
+        // ========== SENSORS (ACTUALIZADO) ==========
+        async function loadSensors() {
+            try {
+                const response = await fetch(`${API_URL}/api/sensors`);
+                const sensors = await response.json();
+                
+                const grid = document.getElementById('sensorGrid');
+                grid.innerHTML = '';
+                
+                sensors.forEach(sensor => {
+                    // Verificamos si viene el dato, si no ponemos 0
+                    const conductividad = sensor.conductivity || 0; 
+
+                    grid.innerHTML += `
+                        <div class="sensor-item">
+                            <div class="sensor-label">${sensor.sensor_id}</div>
+                            <div class="sensor-value">${sensor.temperature.toFixed(1)}°C</div>
+                            
+                            <div style="font-size: 0.85em; opacity: 0.9; margin-top: 8px;">
+                                
+                                <div style="margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
+                                    <span title="Humedad Suelo">
+                                        <i class="bi bi-droplet-fill" style="color: #4fc3f7;"></i> ${sensor.moisture}%
+                                    </span>
+                                    <span style="opacity: 0.3; margin: 0 8px;">|</span>
+                                    <span title="Conductividad (Fertilidad)">
+                                        <i class="bi bi-lightning-fill" style="color: #ffb74d;"></i> 
+                                        <strong>${conductividad} µS/cm</strong>
+                                    </span>
+                                </div>
+                                
+                                <div style="margin-top: 5px;">
+                                    <span title="Luz">
+                                        <i class="bi bi-brightness-high-fill" style="color: #fff176;"></i> ${sensor.light} lx
+                                    </span>
+                                    <span style="opacity: 0.3; margin: 0 8px;">|</span>
+                                    <span title="Batería">
+                                        <i class="bi bi-battery-half" style="color: #81c784;"></i> ${sensor.battery}%
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading sensors:', error);
+                // Mostrar error visual en la tarjeta si falla la carga
+                document.getElementById('sensorGrid').innerHTML = '<p style="color: #ef5350;">Error cargando sensores</p>';
+            }
+        }
+
+        // ========== HISTORY SLIDER ==========
+        async function loadHistory() {
+            try {
+                const response = await fetch(`${API_URL}/api/detections?limit=50&only_images=true`);
+                historyData = await response.json();
+                
+                // Filtrar solo detecciones con imágenes (no acciones de polinización)
+                historyData = historyData.filter(item => item.output_path);
+                
+                const slider = document.getElementById('historySlider');
+                const indicators = document.getElementById('sliderIndicators');
+                
+                if (historyData.length === 0) {
+                    slider.innerHTML = `
+                        <div class="history-empty">
+                            <i class="bi bi-inbox"></i>
+                            <p>No hay detecciones con imágenes aún</p>
+                            <p style="font-size: 0.85em;">Sube una imagen para comenzar</p>
+                        </div>
+                    `;
+                    indicators.innerHTML = '';
+                    document.getElementById('currentSlide').textContent = '0';
+                    document.getElementById('totalSlides').textContent = '0';
+                    document.getElementById('prevBtn').disabled = true;
+                    document.getElementById('nextBtn').disabled = true;
+                    return;
+                }
+                
+                // Reverse para mostrar más recientes primero
+                historyData = historyData.reverse();
+                
+                // Crear indicadores
+                indicators.innerHTML = historyData.map((_, index) => 
+                    `<div class="slider-dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>`
+                ).join('');
+                
+                // Mostrar primer slide
+                currentSlideIndex = 0;
+                renderSlide(currentSlideIndex);
+                updateSliderControls();
+                
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('historySlider').innerHTML = `
+                    <div class="history-empty">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <p>Error cargando historial</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderSlide(index) {
+            const item = historyData[index];
+            if (!item) return;
+            
+            const slider = document.getElementById('historySlider');
+            
+            // Extraer filename del output_path
+            const filename = item.output_path ? item.output_path.split('/').pop() : null;
+            const imageUrl = filename ? `${API_URL}/api/detections/image/${filename}` : null;
+            
+            // Calcular totales
+            const totalFlowers = item.flowers ? 
+                (item.flowers.Lista_para_polinizar || 0) + 
+                (item.flowers.No_desarrollada || 0) + 
+                (item.flowers.Sin_polen || 0) : 0;
+            
+            const totalFruits = item.fruits ?
+                (item.fruits.verde || 0) + 
+                (item.fruits.mixto || 0) + 
+                (item.fruits.rojo || 0) : 0;
+            
+            slider.innerHTML = `
+                <div class="history-slide">
+                    <div class="slide-header">
+                        <div class="slide-title">
+                            <i class="bi bi-image"></i>
+                            ${item.image_name || 'Detección'}
+                        </div>
+                        <div class="slide-timestamp">
+                            <i class="bi bi-clock"></i>
+                            ${new Date(item.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                    
+                    <div class="slide-body">
+                        <!-- Imagen -->
+                        <div class="slide-image-container">
+                            ${imageUrl ? `
+                                <img src="${imageUrl}" 
+                                     alt="Detección YOLO" 
+                                     class="slide-image"
+                                     onclick="openImageModal('${imageUrl}', '${item.image_name || 'Detección'}')"
+                                     onerror="this.parentElement.innerHTML='<div class=\\'image-placeholder\\'><i class=\\'bi bi-image\\'></i> Imagen no disponible</div>'">
+                                <button class="view-full-btn" onclick="openImageModal('${imageUrl}', '${item.image_name || 'Detección'}')">
+                                    <i class="bi bi-arrows-fullscreen"></i> Ver completa
+                                </button>
+                            ` : `
+                                <div class="image-placeholder">
+                                    <i class="bi bi-image"></i> Sin imagen
+                                </div>
+                            `}
+                        </div>
+                        
+                        <!-- Estadísticas -->
+                        <div class="slide-stats">
+                            <!-- Resumen -->
+                            <div class="stats-section">
+                                <div class="stats-section-title">
+                                    <i class="bi bi-bar-chart"></i> Resumen
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-box">
+                                        <div class="stat-box-value">${item.total_objects || 0}</div>
+                                        <div class="stat-box-label">Total</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-box-value">${totalFlowers}</div>
+                                        <div class="stat-box-label">Flores</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-box-value">${totalFruits}</div>
+                                        <div class="stat-box-label">Frutos</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Flores -->
+                            <div class="stats-section">
+                                <div class="stats-section-title">
+                                    <i class="bi bi-flower1"></i> Flores
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-box flowers-ready">
+                                        <div class="stat-box-value">${item.flowers?.Lista_para_polinizar || 0}</div>
+                                        <div class="stat-box-label">Listas</div>
+                                    </div>
+                                    <div class="stat-box flowers-developing">
+                                        <div class="stat-box-value">${item.flowers?.No_desarrollada || 0}</div>
+                                        <div class="stat-box-label">Desarrollo</div>
+                                    </div>
+                                    <div class="stat-box flowers-nopollen">
+                                        <div class="stat-box-value">${item.flowers?.Sin_polen || 0}</div>
+                                        <div class="stat-box-label">Sin Polen</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Frutos -->
+                            <div class="stats-section">
+                                <div class="stats-section-title">
+                                    <i class="bi bi-circle-fill"></i> Frutos
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-box fruits-green">
+                                        <div class="stat-box-value">${item.fruits?.verde || 0}</div>
+                                        <div class="stat-box-label">Verde</div>
+                                    </div>
+                                    <div class="stat-box fruits-mixed">
+                                        <div class="stat-box-value">${item.fruits?.mixto || 0}</div>
+                                        <div class="stat-box-label">Mixto</div>
+                                    </div>
+                                    <div class="stat-box fruits-red">
+                                        <div class="stat-box-value">${item.fruits?.rojo || 0}</div>
+                                        <div class="stat-box-label">Rojo</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Estado Motor -->
+                            <div class="motor-status-slide ${item.motor_activated ? 'activated' : 'not-activated'}">
+                                <i class="bi bi-gear-fill"></i>
+                                <span>${item.motor_activated ? '✓ Motor activado' : 'Motor no activado'}</span>
+                                ${item.should_activate_motor && !item.motor_activated ? 
+                                    '<span style="margin-left: auto; font-size: 0.8em;">(Recomendado)</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateSliderControls() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex >= historyData.length - 1;
+            
+            document.getElementById('currentSlide').textContent = historyData.length > 0 ? currentSlideIndex + 1 : 0;
+            document.getElementById('totalSlides').textContent = historyData.length;
+            
+            // Update indicators
+            document.querySelectorAll('.slider-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlideIndex);
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < historyData.length - 1) {
+                currentSlideIndex++;
+                renderSlide(currentSlideIndex);
+                updateSliderControls();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                renderSlide(currentSlideIndex);
+                updateSliderControls();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            renderSlide(currentSlideIndex);
+            updateSliderControls();
+        }
+
+        // ========== IMAGE MODAL ==========
+        function openImageModal(imageUrl, title) {
+            // Crear modal si no existe
+            let modal = document.getElementById('imageModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'imageModal';
+                modal.className = 'image-modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeImageModal()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                        <img src="" alt="" class="modal-image" id="modalImage">
+                        <div class="modal-info" id="modalInfo"></div>
+                    </div>
+                `;
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeImageModal();
+                });
+                document.body.appendChild(modal);
+            }
+            
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('modalInfo').textContent = title;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeImageModal();
+            // Navegación con flechas
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+
+        // ========== HEALTH CHECK ==========
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_URL}/api/health`);
+                const health = await response.json();
+                
+                document.getElementById('yoloStatus').className = 
+                    health.components.yolo_model ? 'status-badge status-active' : 'status-badge status-inactive';
+                
+                document.getElementById('csvStatus').className = 
+                    health.components.sensors ? 'status-badge status-active' : 'status-badge status-inactive';
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+
+        // ========== ALERTS ==========
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `glass-card alert alert-${type}`;
+            alert.innerHTML = message;
+            
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => alert.remove(), 300);
+            }, 4000);
+        }
+
+        // ========== LOADING ==========
+        function showLoading(text = 'Procesando...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
