@@ -1,0 +1,33 @@
+{
+  "categories": [
+    {
+      "id": 0,
+      "name": "Lista para polinizar"
+    },
+    {
+      "id": 1,
+      "name": "No desarrollada"
+    },
+    {
+      "id": 2,
+      "name": "Sin polen"
+    },
+    {
+      "id": 3,
+      "name": "mixto"
+    },
+    {
+      "id": 4,
+      "name": "rojo"
+    },
+    {
+      "id": 5,
+      "name": "verde"
+    }
+  ],
+  "info": {
+    "year": 2025,
+    "version": "1.0",
+    "contributor": "Label Studio"
+  }
+}

@@ -1,0 +1,15 @@
+path: /content/cherry_yolov8s_database/cherry_yolov8s_database  # Ruta raíz donde están tus carpetas images/ y labels/
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: Lista_para_polinizar
+  1: No_desarrollada
+  2: Sin_polen
+  3: mixto
+  4: rojo
+  5: verde
+
+
+
